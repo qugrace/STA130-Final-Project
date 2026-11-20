@@ -1,7 +1,7 @@
 ---
 title: "Project Title"
 subtitle: "Project subtitle (if applicable)"
-author: "Your names | Group #X"
+author: "Your names | Group 109A"
 date: today
 format:
   beamer:
