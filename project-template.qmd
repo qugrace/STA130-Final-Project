@@ -1,7 +1,7 @@
 ---
 title: "Project Title"
 subtitle: "Project subtitle (if applicable)"
-author: "Your names | Group 109A"
+author: "Yining Liu, Grace Qu, Sophia Salman, Baijun Ye | Group 109A"
 date: today
 format:
   beamer:
@@ -43,7 +43,7 @@ out.width = "80%"
 
 ## Introduction
 
-**Overall Theme:** \[State your unifying theme\]
+**Overall Theme:** \[Education level and neighborhood well-being in Toronto\]
 
 **Research Goal:** \[What are you investigating?\]
 
