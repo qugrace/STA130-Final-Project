@@ -1,8 +1,8 @@
 ---
 title: "Project Title"
 subtitle: "Project subtitle (if applicable)"
-author: "Your names | Group #X"
-date: today
+author: "Yining Liu, Grace Qu, Sophia Salman, Baijun Ye | Group 109A"
+date: Nov. 23, 2026
 format:
   beamer:
     theme: Madrid
