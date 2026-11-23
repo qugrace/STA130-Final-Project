@@ -71,13 +71,27 @@ toronto <- read_csv("toronto_neighbourhoods_STA130.csv") |>
       pct_doctorate_25_64
   )
 ```
-## Question #1: \[Baijun Ye - Education Level and Employment Rates in Toronto Neighborhoods\]
+## Question #1: \[Name - Question Statement\]
+
+
+## Q1: Variables & Approach
+
+## Q1: Visualization
+
+## Q1: Summary Table
+
+
+
+Insights for Q1
+
+## Question #2: \[Baijun Ye - Education Level and Employment Rates in Toronto Neighborhoods\]
 
 Is a higher level of educational attainment associated with higher employment rates across Toronto neighborhoods?
 
 -   This question identifies where lower education levels and lower employment rates occur together, helping the City of Toronto decide which neighborhoods need further assessment for job training and adult education services.
 
-## Q1: Variables & Approach
+
+## Q2: Variables & Approach
 
 **Variables used:**
 
@@ -90,7 +104,9 @@ Is a higher level of educational attainment associated with higher employment ra
 
 -   **`education_group`**: Neighborhoods divided into four quartiles based on education level to compare employment rates.
 
-## Q1: Visualization
+
+## Q2: Visualization
+
 
 ```{r q1-plot}
 #| echo: false
@@ -108,7 +124,8 @@ toronto |>
   theme_minimal()
 ```
 
-## Q1: Summary Table
+
+## Q2: Summary Table
 
 ```{r q1-table}
 #Your summary table here
@@ -149,7 +166,7 @@ toronto |>
 
 -   **Positive Relationship:** Education level and employment rate show a strong positive association across Toronto's 158 neighborhoods (r = 0.68), suggesting that higher educational attainment is associated with better employment outcomes.
 
-## Q1: Continuation
+## Q2: Continuation
 
 -   **Employment Differences:** Average employment rates increase across the four education groups (49.13%, 52.34%, 57.51%, and 61.23%). The highest education group has an employment rate 12.10 percentage points higher than the lowest group.
 
@@ -162,16 +179,6 @@ toronto |>
 **Future Directions:**
 
 -   Future research could use multiple regression to account for factors such as age, income, and immigration status to better understand the relationship between education and employment.
-
-## Question #2: \[Name - Question Statement\]
-
-\[Repeat structure from Q1\]
-
-## Q2: Variables & Approach
-
-## Q2: Visualization
-
-## Q2: Summary Table
 
 ## Question #3: \[Name - Question Statement\]
 
