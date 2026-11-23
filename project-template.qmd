@@ -73,14 +73,43 @@ toronto <- read_csv("toronto_neighbourhoods_STA130.csv") |>
 ```
 ## Question #1: \[Name - Question Statement\]
 
+\[Clear statement of the research question\]
 
 ## Q1: Variables & Approach
 
+**Variables used:**
+
+-   \[List variables\]
+
+**New variables/groups defined:**
+
+-   \[Any created variables\]
+
 ## Q1: Visualization
+
+```{r q1-plot}
+#Your plot code here 
+iris |>
+  ggplot(aes(x=Species, y=Sepal.Length)) +
+  geom_boxplot() +
+  ylab("Sepal Length")
+```
 
 ## Q1: Summary Table
 
+```{r q1-table}
+#Your summary table here
 
+# Here is an example of a nicely formatted table, using the kable function
+iris |>
+  group_by(Species) |>
+  summarise(
+    Count = n(),
+    `Avg Sepal Length` = round(mean(Sepal.Length), 1),
+    `Avg Petal Length` = round(mean(Petal.Length), 1)
+  ) |>
+  kable(caption = "Comparison of Iris Species")
+```
 
 Insights for Q1
 
