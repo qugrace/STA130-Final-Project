@@ -2,7 +2,7 @@
 title: "Project Title"
 subtitle: "Project subtitle (if applicable)"
 author: "Yining Liu, Grace Qu, Sophia Salman, Baijun Ye | Group 109A"
-date: today
+date: Nov. 23, 2026
 format:
   beamer:
     theme: Madrid
@@ -19,10 +19,12 @@ editor: visual
 
 ```{r setup, include=FALSE}
 library(gridExtra)
+library(kableExtra)
 library(tidyverse)
 library(knitr)
 library(cowplot)
 library(moderndive)
+library(broom)
 knitr::opts_chunk$set(
 echo = FALSE,
 include = TRUE,
@@ -39,11 +41,34 @@ out.width = "80%"
 ```{r load-data, echo=FALSE}
 ### Read in data
 
+# Theme: Education level and neighborhood well-being in Toronto - How does the general level of education in Toronto neighborhoods affect safety, economic prosperity, resident mental health, etc.?
+# RQ: What is the relationship between general education level and business presence in the neighborhoods?
+
+project_data <- read_csv("toronto_neighbourhoods_STA130.csv")
+
+project_data <- project_data |> mutate(uni_pct = pct_bachelors_only_25_64+ pct_other_abovebach_25_64 + pct_deg_medicine_25_64 + pct_masters_25_64 + pct_doctorate_25_64, total_business_per_km2 = (num_eating_establishments + num_takeout_food + num_personal_services + num_public_garages + num_sidewalk_cafes + num_laundromats + num_entertainment_venues) / neighbourhood_area_km2, pop_density = population / neighbourhood_area_km2, density_group = ifelse(pop_density >= median(pop_density, na.rm = TRUE),
+                           "Above Median Pop. Density",
+                           "Below Median Pop. Density"))
+
+```
+```{r}
+toronto <- read_csv("toronto_neighbourhoods_STA130.csv") |>
+  mutate(
+    pct_bachelor_or_higher =
+      pct_bachelors_only_25_64 +
+      pct_other_abovebach_25_64 +
+      pct_deg_medicine_25_64 +
+      pct_masters_25_64 +
+      pct_doctorate_25_64
+  )
+```
+
+```         
 ```
 
 ## Introduction
 
-**Overall Theme:** \[Education level and neighborhood well-being in Toronto\]
+**Overall Theme:** \[State your unifying theme\]
 
 **Research Goal:** \[What are you investigating?\]
 
@@ -60,58 +85,113 @@ out.width = "80%"
 
 **Data Wrangling:**
 
-```{r}
-toronto <- read_csv("toronto_neighbourhoods_STA130.csv") |>
-  mutate(
-    pct_bachelor_or_higher =
-      pct_bachelors_only_25_64 +
-      pct_other_abovebach_25_64 +
-      pct_deg_medicine_25_64 +
-      pct_masters_25_64 +
-      pct_doctorate_25_64
-  )
-```
-## Question #1: \[Name - Question Statement\]
 
-\[Clear statement of the research question\]
+## Question #1: \[University pursuit and neighbourhood business presence\]
+
+**What is the relationship between the overall education level of residents and business presence in the neighborhoods?**
+
+This question seeks to measure the economic impact of education on the neighbourhoods. Understanding this relationship could help city-planners make better decisions when planning commercial zones, infrastructure investment, etc.
 
 ## Q1: Variables & Approach
 
 **Variables used:**
 
--   \[List variables\]
+-   neighbourhood_area_km2, population, all education characteristics, all business and restaurant variables
 
 **New variables/groups defined:**
 
--   \[Any created variables\]
+-   uni_pct: The percentage of residents who completed university education at a level of bachelors and above in a neighbourhood. This statistic will be referred to as "education level".
+-   total_business_per_km2: The amount of businesses per square kilometer in a neighbourhood. Eating establishments, takeout places, personal services, public garages, sidewalk cafes, laundromats, and entertainment venues are included in this calculation. This statistic will be referred to as "business density".
+-   pop_density: This variable represents the population density in each neighbourhood, i.e. the average amount of residents per square kilometer. This statistic will be referred to as "population density".
 
-## Q1: Visualization
+## Q1: Visualization - Figure 1
 
 ```{r q1-plot}
 #Your plot code here 
-iris |>
-  ggplot(aes(x=Species, y=Sepal.Length)) +
-  geom_boxplot() +
-  ylab("Sepal Length")
+
+population_plot <- project_data |> ggplot(aes(x = uni_pct, y = total_business_per_km2, color = density_group)) +
+  geom_point(alpha = 0.5) + 
+  geom_smooth(method="lm", se=FALSE) +
+  labs(title = "Business density vs. education level in Toronto neighbourhoods",
+  x = "Percentage of residents who received university education",
+  y = "Amount of businesses per square kilometer") +
+facet_wrap(~density_group)
+
+
+population_plot
 ```
 
-## Q1: Summary Table
+## Q1: Visualization - Figure 2
+
+```{r}
+
+boxplots2 <- project_data |>
+  pivot_longer(
+    cols = c(has_entertainment, has_sidewalk_cafe),
+    names_to = "amenity_type",
+    values_to = "present"
+  ) |>
+  mutate(
+    amenity_type = recode(
+      amenity_type,
+      "has_entertainment" = "Entertainment Venues",
+      "has_sidewalk_cafe" = "Sidewalk Cafés"
+    )
+  ) |>
+  ggplot(aes(x = present, y = uni_pct, fill = present)) +
+  geom_boxplot(alpha = 0.85, show.legend = FALSE) +
+  facet_wrap(~ amenity_type) +
+  labs(
+    title = "Neighbourhood University Attainment by Business Amenity Presence",
+    x = "Amenity Present in Neighbourhood",
+    y = "Percentage of Residents with University Education"
+  ) +
+  theme_minimal()
+boxplots2
+```
+
+## Q1: Summary Table 1
 
 ```{r q1-table}
 #Your summary table here
 
-# Here is an example of a nicely formatted table, using the kable function
-iris |>
-  group_by(Species) |>
-  summarise(
-    Count = n(),
-    `Avg Sepal Length` = round(mean(Sepal.Length), 1),
-    `Avg Petal Length` = round(mean(Petal.Length), 1)
-  ) |>
-  kable(caption = "Comparison of Iris Species")
+dense_data <- project_data |> filter(pop_density >= median(pop_density, na.rm = TRUE))
+dense_model <- lm(total_business_per_km2 ~ uni_pct, data=dense_data) |> tidy() |> select(term, estimate) 
+
+other_data <- project_data |> filter(pop_density < median(pop_density, na.rm = TRUE))
+other_model <- lm(total_business_per_km2 ~ uni_pct, data=other_data) |> tidy() |> select(term, estimate) 
+
+combined_df <- bind_rows(dense_model, other_model)
+
+combined_df |> kable(caption = "Business Density and Education Summary by Group", booktabs = TRUE) |> kable_styling(latex_options = "scale_down") |> pack_rows("High Population Density", start_row = 1, end_row = 2) |> pack_rows("Low Population Density", start_row = 3, end_row = 4)
+
+
+
 ```
 
-Insights for Q1
+## Q1: Summary Table 2
+
+```{r}
+ent <- project_data |> group_by(has_entertainment) |> summarise(n = n(), average = mean(uni_pct), standard_deviation = sd(uni_pct), median = median(uni_pct))
+cafe <- project_data |> group_by(has_sidewalk_cafe) |> summarise(n = n(), average = mean(uni_pct), standard_deviation = sd(uni_pct), median = median(uni_pct))
+
+bind_rows(
+  "Entertainment" = ent |> rename(Present = has_entertainment),
+  "Sidewalk Café" = cafe |> rename(Present = has_sidewalk_cafe),
+  .id = "Amenity"
+) |>
+  kable(digits = 1, caption = "Education Level by Amenity Presence", col.names = c("Business type", "Present", "Number of neighbourhoods", "Average education level", "SD of education level", "Median education level"), padding = 6, align = "ccccc") |> kable_styling(font_size = 9, latex_options = "hold_position") |>
+  column_spec(1, width = "2.2cm") |>
+  column_spec(3:6, width = "1.8cm")
+```
+
+## Q1: Insights
+
+-   In neighbourhoods with population density ranking in Toronto's top 50%, there is a relatively strong positive correlation between education level and business density. The linear regression suggests an increase of around 3.81 businesses per square kilometers on average with each additional percent of residents who receive university education.
+
+-   This relationship is significantly weaker in neighbourhoods with population density ranking in Toronto's bottom 50%, the linear regression has a slope close to 0, indicating that education level has little effect on business density in these neighbourhoods.
+
+-   The boxplots suggest that neighbourhoods with entertainment venues and sidewalk cafes generally have residents with higher education level than those which do not. Neighbourhoods with entertainment venues have an average of 7.7% more residents who received university education than those without, and this difference is 18.9% when comparing presence of sidewalk cafes.
 
 ## Question #2: \[Baijun Ye - Education Level and Employment Rates in Toronto Neighborhoods\]
 
