@@ -41,9 +41,6 @@ out.width = "80%"
 ```{r load-data, echo=FALSE}
 ### Read in data
 
-# Theme: Education level and neighborhood well-being in Toronto - How does the general level of education in Toronto neighborhoods affect safety, economic prosperity, resident mental health, etc.?
-# RQ: What is the relationship between general education level and business presence in the neighborhoods?
-
 project_data <- read_csv("toronto_neighbourhoods_STA130.csv")
 
 project_data <- project_data |> mutate(uni_pct = pct_bachelors_only_25_64+ pct_other_abovebach_25_64 + pct_deg_medicine_25_64 + pct_masters_25_64 + pct_doctorate_25_64, total_business_per_km2 = (num_eating_establishments + num_takeout_food + num_personal_services + num_public_garages + num_sidewalk_cafes + num_laundromats + num_entertainment_venues) / neighbourhood_area_km2, pop_density = population / neighbourhood_area_km2, density_group = ifelse(pop_density >= median(pop_density, na.rm = TRUE),
@@ -66,13 +63,18 @@ toronto <- read_csv("toronto_neighbourhoods_STA130.csv") |>
 
 ## Introduction
 
-**Overall Theme:** \[State your unifying theme\]
 
-**Research Goal:** \[What are you investigating?\]
+**Overall Theme:** Education level and neighborhood well-being in Toronto - How is the level of education in Toronto’s neighborhoods associated with business presence, employment, crime, and housing affordability?
 
-**Target Population:** \[Who/what is being studied?\]
 
-**Audience:** \[Who is this for?\]
+**Research Goal:** This investigation explores how the general level of education in Toronto neighbourhoods relates to four different aspects of the neighbourhood’s well being: local business activity, employment, public safety, and housing affordability. Rather than assuming that education improves all four, we have examined each separately to see where the association is strong or weak, and where it runs in an unexpected direction.
+
+
+**Target Population:** Target population is the 158 neighbourhoods within the Greater Toronto Area whose data was collected in the City of Toronto’s Open Data Portal.
+
+
+**Audience:** The main audience for our project would likely be the City of Toronto’s policymakers, although it is relevant to anyone interested in how education level relates to various socioeconomic aspects of neighbourhoods.
+
 
 ## Question #1: \[University pursuit and neighbourhood business presence\]
 
@@ -350,39 +352,104 @@ q3_data |>
 -   Use denominators matched to each crime (per registered vehicle, per bicycle) rather than per resident.
 -   Add daytime population estimates to separate resident risk from visitor volume.
 
-## Question #4: \[Name - Question Statement\] (if applicable)
+## Question #4: \[Grace - Education and Rent/Housing Affordability\]
+
+**Is the share of renters and homeowners hit by housing unaffordability the same for Toronto neighborhoods with different education levels?**
+
+This question aims to identify how similarly the housing affordability crisis affects neighborhoods with different levels of education. Housing affordability is tied to general neighborhood well-being, because the percent of income spent on housing dictates how much is left for everything else. If housing-stress looks the same across neighborhoods with different education levels, that would challenge the common notion that education protects communities from housing unaffordability.
 
 ## Q4: Variables & Approach
 
+**Variables used:**
+
+- **Education:** `pct_bachelors_only_25_64`, `pct_other_abovebach_25_64`, `pct_deg_medicine_25_64`, `pct_masters_25_64`, and `pct_doctorate_25_64`
+- **Housing and Cost of Living:** `pct_renters_30plus_shelter`, `pct_owners_30plus_shelter`
+
+**New variables/groups defined:**
+
+- **`pct_bachelor_or_higher`**: Percentage of residents aged 25–64 with a bachelor's degree or higher, calculated by combining five education variables
+
+- `education_level`: neighborhoods are given Low, Medium, or High based on what tercile of **`pct_bachelor_or_higher`** the neighborhood falls in
+
+- By unaffordable housing, I mean when a household is spending 30% or more of their income on housing
+
 ## Q4: Visualization
+
+Fig 4:
+
+```{r q4-plot}
+#| echo: false
+
+toronto |>
+  ggplot(aes(x = pct_bachelor_or_higher)) +
+  geom_point(aes(y = pct_renters_30plus_shelter, color = "Renters")) +
+  geom_smooth(aes(y = pct_renters_30plus_shelter, color = "Renters"),
+              method = "lm", se = FALSE) +
+  geom_point(aes(y = pct_owners_30plus_shelter, color = "Owners")) +
+  geom_smooth(aes(y = pct_owners_30plus_shelter, color = "Owners"),
+              method = "lm", se = FALSE) +
+  labs(x="percent of neighborhood residents with bachelor degree or higher", y="percent households with unaffordable housing", color = "housing type")
+
+
+
+```
 
 ## Q4: Summary Table
 
-## Overall Limitations
+```{r q4-table}
 
-It is optional to include this as a stand-alone section at the end, you could also choose to discuss this at the end of each research question
+#| echo: false
 
-**Data Limitations:**
+toronto |> mutate(education_tercile = ntile(pct_bachelor_or_higher, 3),
+                  education_level = case_when(education_tercile == 1 ~ "Low",
+                                              education_tercile == 2 ~ "Medium",
+                                              education_tercile == 3 ~ "High")) |> 
+  group_by(education_level) |> summarize(number_of_neighborhoods = n(), 
+                                mean_pct_bachelor_or_higher = mean(pct_bachelor_or_higher),
+                                mean_pct_renters_unaffordable = mean(pct_renters_30plus_shelter),
+                                mean_pct_owners_unafforable = mean(pct_owners_30plus_shelter)) |> arrange(mean_pct_bachelor_or_higher) |> kable(digits=1, 
+                                                                                                                                                caption = "Housing Affordability based on Education Levels of Neighborhoods", 
+                                                                                                                                                col.names = c("Education Level", "Number of Neighborhoods", "Average Percent of Residents with Bachelor's Degree or Higher", "Percent of Renters with Unaffordable Housing", "Percent of Owners with Unaffordable Housing")) 
+ 
+```
 
--   \[Limitation 1\]
--   \[Limitation 2\]
+## Q4: Continuation
 
-**Future Directions:**
+Insights:
 
--   \[How these could be addressed\]
+- For owners, the graph suggests a very weak, slightly positive linear correlation.
+
+- For renters, the graph suggests a relatively stronger positive correlation.
+
+- I can also add and interpret the linear coefficients here
+
+Limits:
+
+- Although more education is often associated with higher income levels, this investigation does not take into account income levels, since unaffordability is measured as a proportion of income
+- Correlation does not equal causation
+
+Future Directions:
+
+- Further research is needed to find out whether better-educated neighborhoods, and especially the renters living within them, are hit harder by the housing unaffordability crisis.
+
+- Further research would be required to find the true reason behind this relationship (ex. Because renters are not living "within their means" in neighborhoods with higher education levels? Or does education level has a genuine effect on rental affordability?)
+
 
 ## Overall Conclusion
 
 **Key Findings:**
 
--   \[Finding 1 related to theme\]
--   \[Finding 2 related to theme\]
--   \[Finding 3 related to theme\]
+- There is a positive association between the percentage of residents with university degrees and the density of businesses in neighbourhoods with high population density
+- Toronto neighbourhoods with higher education levels generally have higher employment rates(r=0.68), with a 12.10 percentage-point gap between the highest and lowest education groups
+- Education can be used to predict the type of crime in a neighbourhood more accurately than the amount; motor vehicle theft falls sharply as education rises, while bicycle theft and break and enter rises.
+- There is a weak, slightly positive linear correlation between percentage of neighborhood residents with a bachelor’s or higher and percentage of homeowners with unaffordable housing. There is a stronger, positive linear correlation between percentage of neighborhood residents with a bachelor’s or higher and percentage of renters with unaffordable housing. This could suggest that better-educated neighborhoods, and especially the renters living within them, are hit harder by the housing unaffordability crisis.
 
-**Connection to Theme:**
 
-\[How findings relate back to unifying theme\]
+
+## Connection to Theme
+
+Across the four questions, education is associated with neighbourhood outcomes, yet not always in the direction the theme assumes. It tracks employment most strongly and consistently, its link to  business activity holds only in dense neighbourhoods. Plus, in public safety it predicts the type of crime rather than the amount, as motor vehicle theft falls and bicycle theft rises as education increases. A common thread runs through these results ; highly educated neighbourhoods are concentrated in the central, dense, and walkable parts of town. And several outcomes we obtained and measured appear to follow from that density too, as much as from education alone. 
 
 **References:**
 
--   
+-   Claude (Anthropic) and Gemini were used to assist project formatting and integration between Github and RStudio
