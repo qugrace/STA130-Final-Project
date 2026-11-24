@@ -289,13 +289,164 @@ toronto |>
 
 -   Future research could use multiple regression to account for factors such as age, income, and immigration status to better understand the relationship between education and employment.
 
-## Question #3: \[Name - Question Statement\]
+## Question #3: \[Sophia Salman - Education level and the profile of crime\]
+
+#
+**Do neighbourhoods with higher education levels experience less crime, or a different kind of crime?**
+
+This question addresses the safety component of our theme. Q1 and Q2 examined economic outcomes; here we ask whether the same education gradient appears in public safety.
+
+-   **It tests an assumption rather than confirming one.** "More educated neighbourhoods are safer" is widely assumed. If education tracks less of some crimes and more of others, a single safety conclusion would mislead residents and city planners.
+-   **It informs targeted prevention.** Secure bicycle parking and vehicle anti-theft programs are different interventions. Knowing which crimes concentrate where helps the City direct prevention resources.
 
 ## Q3: Variables & Approach
 
+**Variables used:**
+
+-   All education characteristics, via uni_pct as defined in Q1
+-   autotheft_rate_2025 and biketheft_rate_2025, the primary outcome variables
+-   breakenter_rate_2025, robbery_rate_2025 and assault_rate_2025, for comparison
+-   median_household_income, used for a robustness check
+-   pct_bike_commuters and eating_establishments_per_km2, used to investigate the mechanism
+
+**New variables/groups defined:**
+
+-   edu_group: the 158 neighbourhoods divided into three equal groups (terciles) of uni_pct, labelled Low, Medium and High education. Terciles were used rather than a median split so that a gradient across three levels could be observed rather than a single contrast. This produces 53, 52 and 53 neighbourhoods with median education levels of 32.3%, 48.6% and 68.2%.
+-   income_group: neighbourhoods split at the median household income of \$84,500. This is used only to test whether the education pattern is better explained by income.
+
+```{r q3-wrangle}
+q3_data <- project_data |>
+  mutate(
+    edu_group = case_when(
+      uni_pct <  quantile(uni_pct, 1/3) ~ "Low education",
+      uni_pct <  quantile(uni_pct, 2/3) ~ "Medium education",
+      TRUE                              ~ "High education"
+    ),
+    edu_group = factor(
+      edu_group,
+      levels = c("Low education", "Medium education", "High education")
+    ),
+    income_group = ifelse(
+      median_household_income >= median(median_household_income, na.rm = TRUE),
+      "Above Median Income",
+      "Below Median Income"
+    )
+  )
+```
+
 ## Q3: Visualization
 
-## Q3: Summary Table
+```{r q3-plot, fig.width=8, fig.height=4}
+crime_plot <- q3_data |>
+  select(edu_group, autotheft_rate_2025, biketheft_rate_2025) |>
+  pivot_longer(
+    cols = c(autotheft_rate_2025, biketheft_rate_2025),
+    names_to = "crime_type",
+    values_to = "rate"
+  ) |>
+  mutate(
+    crime_type = recode(
+      crime_type,
+      "autotheft_rate_2025" = "Motor Vehicle Theft",
+      "biketheft_rate_2025" = "Bicycle Theft"
+    )
+  ) |>
+  ggplot(aes(x = edu_group, y = rate, fill = edu_group)) +
+  geom_boxplot(alpha = 0.85, show.legend = FALSE) +
+  facet_wrap(~ crime_type, scales = "free_y") +
+  labs(
+    title = "Opposing Education Gradients for Two Property Crimes",
+    subtitle = "158 Toronto neighbourhoods grouped into terciles of university attainment",
+    x = "Neighbourhood Education Level",
+    y = "Reported Crimes per 100,000 Residents"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+
+crime_plot
+```
+
+\tiny \textbf{Note:} Bicycle theft rates are missing for 11 neighbourhoods, so that panel uses 147 neighbourhoods. The y-axes are free because the two crimes occur at different rates; the direction of each gradient, not the height of the panels, is being compared.
+
+## Q3: Summary Table 1
+
+```{r q3-table}
+q3_data |>
+  group_by(edu_group) |>
+  summarise(
+    n          = n(),
+    med_edu    = median(uni_pct),
+    autotheft  = median(autotheft_rate_2025,  na.rm = TRUE),
+    biketheft  = median(biketheft_rate_2025,  na.rm = TRUE),
+    breakenter = median(breakenter_rate_2025, na.rm = TRUE),
+    robbery    = median(robbery_rate_2025,    na.rm = TRUE),
+    assault    = median(assault_rate_2025,    na.rm = TRUE)
+  ) |>
+  kable(
+    digits = 1,
+    caption = "Median Crime Rates per 100,000 Residents by Education Tercile",
+    col.names = c("Education level", "Number of neighbourhoods",
+                  "Median education level", "Motor vehicle theft",
+                  "Bicycle theft", "Break and enter", "Robbery", "Assault"),
+    align = "lccccccc",
+    booktabs = TRUE
+  ) |>
+  kable_styling(font_size = 8, latex_options = c("scale_down", "hold_position"))
+```
+
+## Q3: Summary Table 2
+
+```{r q3-table2}
+q3_data |>
+  group_by(income_group, edu_group) |>
+  summarise(
+    n         = n(),
+    autotheft = median(autotheft_rate_2025, na.rm = TRUE),
+    biketheft = median(biketheft_rate_2025, na.rm = TRUE),
+    .groups   = "drop"
+  ) |>
+  kable(
+    digits = 1,
+    caption = "The Education Gradient Holds Within Both Income Groups",
+    col.names = c("Income group", "Education level", "Number of neighbourhoods",
+                  "Median motor vehicle theft", "Median bicycle theft"),
+    align = "llccc",
+    booktabs = TRUE
+  ) |>
+  kable_styling(font_size = 8, latex_options = "hold_position")
+```
+
+## Q3: Insights
+
+-   **Education is not associated with less crime, but with a different mix of crime.** From the lowest to the highest education tercile, median motor vehicle theft falls from 270 to 116 per 100,000 residents, while median bicycle theft rises from 16 to 66. The two gradients run in opposite directions.
+
+-   **Break and enter follows bicycle theft upward** (150 to 229) while **robbery follows motor vehicle theft downward** (88 to 57). A single combined crime measure would average these out and show almost nothing.
+
+-   **Assault shows the weakest pattern** (672 to 565), and the difference across the three terciles is not statistically distinguishable. Violent crime does not track education in this data.
+
+## Q3: Insights (continued)
+
+-   **The pattern is not explained by income.** Summary Table 2 shows the bicycle theft gradient still rising with education within both income groups (11.9 to 54.4 above median income; 23.2 to 72.9 below median income), and motor vehicle theft still falling (287.7 to 118.6; 258.0 to 89.6). Education is not acting purely as a proxy for household income here.
+
+-   **A likely explanation is exposure rather than behaviour.** Higher-education neighbourhoods are denser and more walkable and have more cyclists. Bicycle theft is more strongly associated with the share of bicycle commuters (correlation 0.67) and with restaurant density (0.71) than with education itself (0.49). What differs across neighbourhoods may be mainly what there is available to steal.
+
+-   **This connects to Q1.** Q1 found that education predicts business density only in high-density neighbourhoods. Both results point the same way: education in this dataset is closely tied to the dense, central parts of the city, and several neighbourhood outcomes follow from that density rather than from education directly.
+
+## Q3: Limitations and Future Directions
+
+**Data Limitations:**
+
+-   **Crime rates use residents as the denominator, not potential targets.** A neighbourhood with few cars will record a low motor vehicle theft rate regardless of how safe it is. Rates per registered vehicle or per bicycle would be more appropriate but are not available in this dataset.
+-   **Daytime population is not accounted for.** Downtown neighbourhoods host far more visitors than residents, which inflates every rate computed per resident.
+-   **Reported crime only.** Differences may partly reflect differences in willingness to report rather than in crime itself.
+-   **The years do not match.** Education comes from the 2021 Census while crime is from 2025.
+-   **One extreme value.** Mimico-Queensway records an assault rate of 4,209 per 100,000 residents, far above every other neighbourhood, which suggests a possible recording issue.
+
+**Future Directions:**
+
+-   Obtain vehicle and bicycle ownership counts to compute rates per potential target rather than per resident.
+-   Use daytime population estimates to separate resident risk from visitor volume.
+
 
 ## Question #4: \[Name - Question Statement\] (if applicable)
 
