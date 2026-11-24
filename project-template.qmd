@@ -334,7 +334,21 @@ q3_data |>
 
 -   **Education predicts the type of crime, not the amount.** Motor vehicle theft falls from 270 to 116 and robbery from 88 to 57, while bicycle theft rises from 16 to 66 and break and enter from 150 to 229. Assault (672 to 565) shows no clear pattern.
 -   **This is not explained by income.** Within both income groups the bicycle theft gradient still rises (11.9 to 54.4 above median income; 23.2 to 72.9 below) and motor vehicle theft still falls (287.7 to 118.6; 258.0 to 89.6).
--   **Exposure is the likely mechanism.** Bicycle theft is more strongly associated with the share of bicycle commuters (0.67) and restaurant density (0.71) than with education (0.49): what differs may be mainly what there is to steal. A limitation follows directly from this, since rates are per resident rather than per car or per bicycle.
+-   **Exposure is the likely mechanism.** Bicycle theft is more strongly associated with the share of bicycle commuters (0.67) and restaurant density (0.71) than with education (0.49): what differs may be mainly what there is to steal.
+
+## Q3: Limitations & Future Directions
+
+**Limitations:**
+
+-   **Rates are per resident, not per potential target.** A neighbourhood with few cars will show a low motor vehicle theft rate regardless of how safe it is.
+-   **Daytime population is not counted.** Downtown neighbourhoods host far more visitors than residents, which inflates every per-resident rate.
+-   **Education and density are intertwined.** The most educated neighbourhoods are also the densest, so the two effects cannot be fully separated.
+-   **The years do not match.** Education is from the 2021 Census while crime is from 2025.
+
+**Future Directions:**
+
+-   Use denominators matched to each crime (per registered vehicle, per bicycle) rather than per resident.
+-   Add daytime population estimates to separate resident risk from visitor volume.
 
 ## Question #4: \[Name - Question Statement\] (if applicable)
 
