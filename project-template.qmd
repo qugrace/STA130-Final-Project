@@ -50,8 +50,17 @@ project_data <- project_data |> mutate(uni_pct = pct_bachelors_only_25_64+ pct_o
                            "Above Median Pop. Density",
                            "Below Median Pop. Density"))
 
-
-
+```
+```{r}
+toronto <- read_csv("toronto_neighbourhoods_STA130.csv") |>
+  mutate(
+    pct_bachelor_or_higher =
+      pct_bachelors_only_25_64 +
+      pct_other_abovebach_25_64 +
+      pct_deg_medicine_25_64 +
+      pct_masters_25_64 +
+      pct_doctorate_25_64
+  )
 ```
 
 ```         
@@ -76,7 +85,6 @@ project_data <- project_data |> mutate(uni_pct = pct_bachelors_only_25_64+ pct_o
 
 **Data Wrangling:**
 
--   \[Any transformations, new variables created\]
 
 ## Question #1: \[University pursuit and neighbourhood business presence\]
 
@@ -185,15 +193,101 @@ bind_rows(
 
 -   The boxplots suggest that neighbourhoods with entertainment venues and sidewalk cafes generally have residents with higher education level than those which do not. Neighbourhoods with entertainment venues have an average of 7.7% more residents who received university education than those without, and this difference is 18.9% when comparing presence of sidewalk cafes.
 
-## Question #2: \[Name - Question Statement\]
+## Question #2: \[Baijun Ye - Education Level and Employment Rates in Toronto Neighborhoods\]
 
-\[Repeat structure from Q1\]
+Is a higher level of educational attainment associated with higher employment rates across Toronto neighborhoods?
+
+-   This question identifies where lower education levels and lower employment rates occur together, helping the City of Toronto decide which neighborhoods need further assessment for job training and adult education services.
+
 
 ## Q2: Variables & Approach
 
+**Variables used:**
+
+-   **Employment:** `employment_rate` (percentage of residents aged 15+ who are employed).
+-   **Education:** `pct_bachelors_only_25_64`, `pct_other_abovebach_25_64`, `pct_deg_medicine_25_64`, `pct_masters_25_64`, and `pct_doctorate_25_64`.
+
+**New variables/groups defined:**
+
+-   **`pct_bachelor_or_higher`**: Percentage of residents aged 25–64 with a bachelor's degree or higher, calculated by combining five education variables.
+
+-   **`education_group`**: Neighborhoods divided into four quartiles based on education level to compare employment rates.
+
+
 ## Q2: Visualization
 
+
+```{r q1-plot}
+#| echo: false
+#Your plot code here 
+toronto |>
+  ggplot(aes(x = pct_bachelor_or_higher,
+             y = employment_rate)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Education Level vs Employment Rate",
+    x = "Bachelor's Degree or Higher (%)",
+    y = "Employment Rate (%)"
+  ) +
+  theme_minimal()
+```
+
+
 ## Q2: Summary Table
+
+```{r q1-table}
+#Your summary table here
+
+# Here is an example of a nicely formatted table, using the kable function
+#| echo: false
+
+toronto |>
+  mutate(
+    education_group = ntile(pct_bachelor_or_higher, 4),
+    education_group = case_when(
+      education_group == 1 ~ "Lowest Education",
+      education_group == 2 ~ "Lower-Middle Education",
+      education_group == 3 ~ "Upper-Middle Education",
+      education_group == 4 ~ "Highest Education"
+    ),
+    education_group = factor(
+      education_group,
+      levels = c(
+        "Lowest Education",
+        "Lower-Middle Education",
+        "Upper-Middle Education",
+        "Highest Education"
+      )
+    )
+  ) |>
+  group_by(education_group) |>
+  summarise(
+    n = n(),
+    avg_education = round(mean(pct_bachelor_or_higher), 2),
+    avg_employment = round(mean(employment_rate), 2),
+    .groups = "drop"
+  ) |>
+  kable(caption = "Employment Rate by Education Level")
+```
+
+**Insights for Q1**
+
+-   **Positive Relationship:** Education level and employment rate show a strong positive association across Toronto's 158 neighborhoods (r = 0.68), suggesting that higher educational attainment is associated with better employment outcomes.
+
+## Q2: Continuation
+
+-   **Employment Differences:** Average employment rates increase across the four education groups (49.13%, 52.34%, 57.51%, and 61.23%). The highest education group has an employment rate 12.10 percentage points higher than the lowest group.
+
+-   **Overall Finding:** Both the scatterplot and summary table suggest a strong positive association between educational attainment and employment rates across Toronto neighborhoods, although this relationship does not establish causation.
+
+**Limitation:**
+
+-   This analysis shows association rather than causation, and differences in age distribution and socioeconomic conditions may also influence employment rates.
+
+**Future Directions:**
+
+-   Future research could use multiple regression to account for factors such as age, income, and immigration status to better understand the relationship between education and employment.
 
 ## Question #3: \[Name - Question Statement\]
 
