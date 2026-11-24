@@ -1,6 +1,6 @@
 ---
-title: "Project Title"
-subtitle: "Project subtitle (if applicable)"
+title: "Education level and neighborhood well-being in Toronto"
+subtitle: "How is the general level of education in Toronto neighborhoods associated with business presence, employment, crime, and housing affordability?"
 author: "Yining Liu, Grace Qu, Sophia Salman, Baijun Ye | Group 109A"
 date: Nov. 23, 2026
 format:
