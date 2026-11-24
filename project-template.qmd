@@ -374,7 +374,7 @@ Limits:
 
 Future Directions:
 
-- Further research is needed to find out whether better-educated neighborhoods, and especially the renters living within them, are hit by the housing unaffordability crisis harder.
+- Further research is needed to find out whether better-educated neighborhoods, and especially the renters living within them, are hit harder by the housing unaffordability crisis.
 
 - Further research would be required to find the true reason behind this relationship (ex. Because renters are not living "within their means" in neighborhoods with higher education levels? Or does education level has a genuine effect on rental affordability?)
 
