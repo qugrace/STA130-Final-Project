@@ -40,18 +40,22 @@ out.width = "80%"
 
 ```{r load-data, echo=FALSE}
 ### Read in data
-toronto <- read_csv("data/toronto_neighbourhoods_STA130.csv")
+
 
 # Theme: Education level and neighborhood well-being in Toronto - How does the general level of education in Toronto neighborhoods affect safety, economic prosperity, resident mental health, etc.?
 # RQ: What is the relationship between general education level and business presence in the neighborhoods?
 
 project_data <- read_csv("toronto_neighbourhoods_STA130.csv")
 
-project_data <- project_data |> mutate(uni_pct = pct_bachelors_only_25_64+ pct_other_abovebach_25_64 + pct_deg_medicine_25_64 + pct_masters_25_64 + pct_doctorate_25_64, total_business_per_km2 = (num_eating_establishments + num_takeout_food + num_personal_services + num_public_garages + num_sidewalk_cafes + num_laundromats + num_entertainment_venues) / neighbourhood_area_km2, pop_density = population / neighbourhood_area_km2, density_group = ifelse(pop_density >= median(pop_density, na.rm = TRUE),
+project_data <- project_data |> mutate(uni_pct = pct_bachelors_only_25_64+ pct_other_abovebach_25_64 + pct_deg_medicine_25_64 + pct_masters_25_64 + pct_doctorate_25_64, 
+                                      total_business_per_km2 = (num_eating_establishments + num_takeout_food + num_personal_services + num_public_garages + num_sidewalk_cafes + num_laundromats + num_entertainment_venues) / neighbourhood_area_km2, 
+                                     pop_density = population / neighbourhood_area_km2, 
+                                     density_group = ifelse(pop_density >= median(pop_density, na.rm = TRUE),
                            "Above Median Pop. Density",
                            "Below Median Pop. Density"))
 
 ```
+
 ```{r}
 toronto <- read_csv("toronto_neighbourhoods_STA130.csv") |>
   mutate(
@@ -62,9 +66,8 @@ toronto <- read_csv("toronto_neighbourhoods_STA130.csv") |>
       pct_masters_25_64 +
       pct_doctorate_25_64
   )
-```
 
-```         
+
 ```
 
 ## Introduction
@@ -86,7 +89,6 @@ toronto <- read_csv("toronto_neighbourhoods_STA130.csv") |>
 
 **Data Wrangling:**
 
-
 ## Question #1: \[University pursuit and neighbourhood business presence\]
 
 **What is the relationship between the overall education level of residents and business presence in the neighborhoods?**
@@ -97,13 +99,13 @@ This question seeks to measure the economic impact of education on the neighbour
 
 **Variables used:**
 
--   neighbourhood_area_km2, population, all education characteristics, all business and restaurant variables
+- neighbourhood_area_km2, population, all education characteristics, all business and restaurant variables
 
 **New variables/groups defined:**
 
--   uni_pct: The percentage of residents who completed university education at a level of bachelors and above in a neighbourhood. This statistic will be referred to as "education level".
--   total_business_per_km2: The amount of businesses per square kilometer in a neighbourhood. Eating establishments, takeout places, personal services, public garages, sidewalk cafes, laundromats, and entertainment venues are included in this calculation. This statistic will be referred to as "business density".
--   pop_density: This variable represents the population density in each neighbourhood, i.e. the average amount of residents per square kilometer. This statistic will be referred to as "population density".
+- uni_pct: The percentage of residents who completed university education at a level of bachelors and above in a neighbourhood. This statistic will be referred to as "education level".
+- total_business_per_km2: The amount of businesses per square kilometer in a neighbourhood. Eating establishments, takeout places, personal services, public garages, sidewalk cafes, laundromats, and entertainment venues are included in this calculation. This statistic will be referred to as "business density".
+- pop_density: This variable represents the population density in each neighbourhood, i.e. the average amount of residents per square kilometer. This statistic will be referred to as "population density".
 
 ## Q1: Visualization - Figure 1
 
@@ -188,35 +190,32 @@ bind_rows(
 
 ## Q1: Insights
 
--   In neighbourhoods with population density ranking in Toronto's top 50%, there is a relatively strong positive correlation between education level and business density. The linear regression suggests an increase of around 3.81 businesses per square kilometers on average with each additional percent of residents who receive university education.
+- In neighbourhoods with population density ranking in Toronto's top 50%, there is a relatively strong positive correlation between education level and business density. The linear regression suggests an increase of around 3.81 businesses per square kilometers on average with each additional percent of residents who receive university education.
 
--   This relationship is significantly weaker in neighbourhoods with population density ranking in Toronto's bottom 50%, the linear regression has a slope close to 0, indicating that education level has little effect on business density in these neighbourhoods.
+- This relationship is significantly weaker in neighbourhoods with population density ranking in Toronto's bottom 50%, the linear regression has a slope close to 0, indicating that education level has little effect on business density in these neighbourhoods.
 
--   The boxplots suggest that neighbourhoods with entertainment venues and sidewalk cafes generally have residents with higher education level than those which do not. Neighbourhoods with entertainment venues have an average of 7.7% more residents who received university education than those without, and this difference is 18.9% when comparing presence of sidewalk cafes.
+- The boxplots suggest that neighbourhoods with entertainment venues and sidewalk cafes generally have residents with higher education level than those which do not. Neighbourhoods with entertainment venues have an average of 7.7% more residents who received university education than those without, and this difference is 18.9% when comparing presence of sidewalk cafes.
 
 ## Question #2: \[Baijun Ye - Education Level and Employment Rates in Toronto Neighborhoods\]
 
 Is a higher level of educational attainment associated with higher employment rates across Toronto neighborhoods?
 
--   This question identifies where lower education levels and lower employment rates occur together, helping the City of Toronto decide which neighborhoods need further assessment for job training and adult education services.
-
+- This question identifies where lower education levels and lower employment rates occur together, helping the City of Toronto decide which neighborhoods need further assessment for job training and adult education services.
 
 ## Q2: Variables & Approach
 
 **Variables used:**
 
--   **Employment:** `employment_rate` (percentage of residents aged 15+ who are employed).
--   **Education:** `pct_bachelors_only_25_64`, `pct_other_abovebach_25_64`, `pct_deg_medicine_25_64`, `pct_masters_25_64`, and `pct_doctorate_25_64`.
+- **Employment:** `employment_rate` (percentage of residents aged 15+ who are employed).
+- **Education:** `pct_bachelors_only_25_64`, `pct_other_abovebach_25_64`, `pct_deg_medicine_25_64`, `pct_masters_25_64`, and `pct_doctorate_25_64`.
 
 **New variables/groups defined:**
 
--   **`pct_bachelor_or_higher`**: Percentage of residents aged 25–64 with a bachelor's degree or higher, calculated by combining five education variables.
+- **`pct_bachelor_or_higher`**: Percentage of residents aged 25–64 with a bachelor's degree or higher, calculated by combining five education variables.
 
--   **`education_group`**: Neighborhoods divided into four quartiles based on education level to compare employment rates.
-
+- **`education_group`**: Neighborhoods divided into four quartiles based on education level to compare employment rates.
 
 ## Q2: Visualization
-
 
 ```{r q1-plot}
 #| echo: false
@@ -233,7 +232,6 @@ toronto |>
   ) +
   theme_minimal()
 ```
-
 
 ## Q2: Summary Table
 
@@ -274,21 +272,21 @@ toronto |>
 
 **Insights for Q1**
 
--   **Positive Relationship:** Education level and employment rate show a strong positive association across Toronto's 158 neighborhoods (r = 0.68), suggesting that higher educational attainment is associated with better employment outcomes.
+- **Positive Relationship:** Education level and employment rate show a strong positive association across Toronto's 158 neighborhoods (r = 0.68), suggesting that higher educational attainment is associated with better employment outcomes.
 
 ## Q2: Continuation
 
--   **Employment Differences:** Average employment rates increase across the four education groups (49.13%, 52.34%, 57.51%, and 61.23%). The highest education group has an employment rate 12.10 percentage points higher than the lowest group.
+- **Employment Differences:** Average employment rates increase across the four education groups (49.13%, 52.34%, 57.51%, and 61.23%). The highest education group has an employment rate 12.10 percentage points higher than the lowest group.
 
--   **Overall Finding:** Both the scatterplot and summary table suggest a strong positive association between educational attainment and employment rates across Toronto neighborhoods, although this relationship does not establish causation.
+- **Overall Finding:** Both the scatterplot and summary table suggest a strong positive association between educational attainment and employment rates across Toronto neighborhoods, although this relationship does not establish causation.
 
 **Limitation:**
 
--   This analysis shows association rather than causation, and differences in age distribution and socioeconomic conditions may also influence employment rates.
+- This analysis shows association rather than causation, and differences in age distribution and socioeconomic conditions may also influence employment rates.
 
 **Future Directions:**
 
--   Future research could use multiple regression to account for factors such as age, income, and immigration status to better understand the relationship between education and employment.
+- Future research could use multiple regression to account for factors such as age, income, and immigration status to better understand the relationship between education and employment.
 
 ## Question #3: \[Name - Question Statement\]
 
@@ -298,22 +296,88 @@ toronto |>
 
 ## Q3: Summary Table
 
-## Question #4: \[Name - Question Statement\] (if applicable)
+## Question #4: \[Grace - Education and Rent/Housing Affordability\] 
+
+**Is the share of renters and homeowners hit by housing unaffordability the same for Toronto neighborhoods with different education levels?**
+
+This question aims to identify how similarly the housing affordability crisis affects neighborhoods with different levels of education. Housing affordability is tied to general neighborhood well-being, because the percent of income spent on housing dictates how much is left for everything else. If housing-stress looks the same across neighborhoods with different education levels, that would challenge the common notion that education protects communities from housing unaffordability.
 
 ## Q4: Variables & Approach
 
+**Variables used:**
+
+- **Education:** `pct_bachelors_only_25_64`, `pct_other_abovebach_25_64`, `pct_deg_medicine_25_64`, `pct_masters_25_64`, and `pct_doctorate_25_64`
+- **Housing and Cost of Living:** `pct_renters_30plus_shelter`, `pct_owners_30plus_shelter`
+
+**New variables/groups defined:**
+
+- **`pct_bachelor_or_higher`**: Percentage of residents aged 25–64 with a bachelor's degree or higher, calculated by combining five education variables
+
+- `education_level`: neighborhoods are given Low, Medium, or High based on what tercile of **`pct_bachelor_or_higher`** the neighborhood falls in
+
+- By unaffordable housing, I mean when a household is spending 30% or more of their income on housing
+
 ## Q4: Visualization
 
+Fig 4:
+
+```{r q4-plot}
+#| echo: false
+
+toronto |>
+  ggplot(aes(x = pct_bachelor_or_higher)) +
+  geom_point(aes(y = pct_renters_30plus_shelter, color = "Renters")) +
+  geom_smooth(aes(y = pct_renters_30plus_shelter, color = "Renters"),
+              method = "lm", se = FALSE) +
+  geom_point(aes(y = pct_owners_30plus_shelter, color = "Owners")) +
+  geom_smooth(aes(y = pct_owners_30plus_shelter, color = "Owners"),
+              method = "lm", se = FALSE) +
+  labs(x="percent of neighborhood residents with bachelor degree or higher", y="percent households with unaffordable housing", color = "housing type")
+
+
+
+```
+
 ## Q4: Summary Table
+
+```{r q4-table}
+#maybe a table with low, medium, high education neighborhoods, and their average percentages of unaffordable housing, along with their linear coefficients
+
+#| echo: false
+
+toronto |> mutate(education_tercile = ntile(pct_bachelor_or_higher, 3),
+                  education_level = case_when(education_tercile == 1 ~ "Low",
+                                              education_tercile == 2 ~ "Medium",
+                                              education_tercile == 3 ~ "High")) |> 
+  group_by(education_level) |> summarize(number_of_neighborhoods = n(), 
+                                mean_pct_bachelor_or_higher = mean(pct_bachelor_or_higher),
+                                mean_pct_renters_unaffordable = mean(pct_renters_30plus_shelter),
+                                mean_pct_owners_unafforable = mean(pct_owners_30plus_shelter)) |> arrange(mean_pct_bachelor_or_higher) |> kable(digits=1, caption = "Housing Affordability based on Education Levels of Neighborhoods", col.names = c("Education Level", "Number of Neighborhoods", "Average Percent of Residents with Bachelor's Degree or Higher", "Percent of Renters with Unaffordable Housing", "Percent of Owners with Unaffordable Housing")) 
+ 
+```
+
+## Q4: Continuation
+
+Insights:
+
+- For owners, the graph suggests a very weak, slightly positive linear correlation between the percentage of owners with a bachelor's degree or higher in a neighborhood and the percent of owner households with unaffordable housing.
+
+- For renters, the graph suggests a relatively stronger positive correlation between the percentage of renters with a bachelor's degree or higher in a neighborhood and the percent of renter households with unaffordable housing.
+
+- 
+
+Limits:
+
+- The data for some neighborhoods might be more accurate than others due to lack of adequate sampling
+- Although more education is often associated with higher income levels, this investigation does not take into account income levels, since unaffordability is measured as a proportion of income
+- Further research would be required to see if this correlation is because renters are not living "within their means" in neighborhoods with higher education levels, if home owners with higher education levels are pricing these renters out, or if education level has a genuine effect on rental affordability
+- Correlation does not equal causation
 
 ## Overall Limitations
 
 It is optional to include this as a stand-alone section at the end, you could also choose to discuss this at the end of each research question
 
 **Data Limitations:**
-
-- \[Limitation 1\]
-- \[Limitation 2\]
 
 **Future Directions:**
 
