@@ -374,7 +374,9 @@ Limits:
 
 Future Directions:
 
-- Further research would be required to find the true reason behind this relationship (ex. Is it because renters are not living "within their means" in neighborhoods with higher education levels? Or does education level has a genuine effect on rental affordability?)
+- Further research is needed to find out whether better-educated neighborhoods, and especially the renters living within them, are hit by the housing unaffordability crisis harder.
+
+- Further research would be required to find the true reason behind this relationship (ex. Because renters are not living "within their means" in neighborhoods with higher education levels? Or does education level has a genuine effect on rental affordability?)
 
 ## Overall Limitations
 
