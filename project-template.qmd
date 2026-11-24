@@ -296,7 +296,7 @@ toronto |>
 
 ## Q3: Summary Table
 
-## Question #4: \[Grace - Education and Rent/Housing Affordability\] 
+## Question #4: \[Grace - Education and Rent/Housing Affordability\]
 
 **Is the share of renters and homeowners hit by housing unaffordability the same for Toronto neighborhoods with different education levels?**
 
@@ -361,17 +361,16 @@ toronto |> mutate(education_tercile = ntile(pct_bachelor_or_higher, 3),
 
 Insights:
 
-- For owners, the graph suggests a very weak, slightly positive linear correlation between the percentage of owners with a bachelor's degree or higher in a neighborhood and the percent of owner households with unaffordable housing.
+- For owners, the graph suggests a very weak, slightly positive linear correlation.
 
-- For renters, the graph suggests a relatively stronger positive correlation between the percentage of renters with a bachelor's degree or higher in a neighborhood and the percent of renter households with unaffordable housing.
+- For renters, the graph suggests a relatively stronger positive correlation.
 
-- 
+- I can also add and interpret the linear coefficients here
 
 Limits:
 
-- The data for some neighborhoods might be more accurate than others due to lack of adequate sampling
 - Although more education is often associated with higher income levels, this investigation does not take into account income levels, since unaffordability is measured as a proportion of income
-- Further research would be required to see if this correlation is because renters are not living "within their means" in neighborhoods with higher education levels, if home owners with higher education levels are pricing these renters out, or if education level has a genuine effect on rental affordability
+- Further research would be required to find the true reason behind this relationship (ex. Is it because renters are not living "within their means" in neighborhoods with higher education levels? Or does education level has a genuine effect on rental affordability?)
 - Correlation does not equal causation
 
 ## Overall Limitations
