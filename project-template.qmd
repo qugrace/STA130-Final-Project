@@ -341,7 +341,6 @@ toronto |>
 ## Q4: Summary Table
 
 ```{r q4-table}
-#maybe a table with low, medium, high education neighborhoods, and their average percentages of unaffordable housing, along with their linear coefficients
 
 #| echo: false
 
@@ -352,7 +351,9 @@ toronto |> mutate(education_tercile = ntile(pct_bachelor_or_higher, 3),
   group_by(education_level) |> summarize(number_of_neighborhoods = n(), 
                                 mean_pct_bachelor_or_higher = mean(pct_bachelor_or_higher),
                                 mean_pct_renters_unaffordable = mean(pct_renters_30plus_shelter),
-                                mean_pct_owners_unafforable = mean(pct_owners_30plus_shelter)) |> arrange(mean_pct_bachelor_or_higher) |> kable(digits=1, caption = "Housing Affordability based on Education Levels of Neighborhoods", col.names = c("Education Level", "Number of Neighborhoods", "Average Percent of Residents with Bachelor's Degree or Higher", "Percent of Renters with Unaffordable Housing", "Percent of Owners with Unaffordable Housing")) 
+                                mean_pct_owners_unafforable = mean(pct_owners_30plus_shelter)) |> arrange(mean_pct_bachelor_or_higher) |> kable(digits=1, 
+                                                                                                                                                caption = "Housing Affordability based on Education Levels of Neighborhoods", 
+                                                                                                                                                col.names = c("Education Level", "Number of Neighborhoods", "Average Percent of Residents with Bachelor's Degree or Higher", "Percent of Renters with Unaffordable Housing", "Percent of Owners with Unaffordable Housing")) 
  
 ```
 
