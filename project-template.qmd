@@ -233,8 +233,8 @@ toronto |>
 
 **Do neighbourhoods with higher education levels experience less crime, or a different kind of crime?**
 
--   **It tests an assumption rather than confirming one.** "More educated neighbourhoods are safer" is widely assumed. If education tracks less of some crimes and more of others, a single safety conclusion would mislead residents and city planners.
--   **It informs targeted prevention.** Secure bicycle parking and vehicle anti-theft programs are different interventions, so knowing which crimes concentrate where helps the City direct prevention resources.
+-   **It tests the widely assumed assumption that "more educated neighbourhoods are safer," rather than confirming it.** If education is correlated with less of some crimes and more of others, a single safety conclusion would mislead residents and city planners.
+-   **It informs targeted prevention.** Secure bicycle parking and vehicle anti-theft programs are different interventions, so knowing which crimes concentrate where helps the city direct prevention resources.
 
 ## Q3: Variables & Approach
 
@@ -247,7 +247,7 @@ toronto |>
 
 **New variables/groups defined:**
 
--   edu_group: the 158 neighbourhoods divided into three equal groups (terciles) of uni_pct, labelled Low, Medium and High education. Terciles were used rather than a median split so that a gradient across three levels could be observed. This gives 53, 52 and 53 neighbourhoods with median education levels of 32.3%, 48.6% and 68.2%.
+-   edu_group: the 158 neighbourhoods divided into three equal groups (terciles) of uni_pct (the percentage of residents with a bachelor's degree or higher), labelled Low, Medium and High education. Terciles were used rather than a median split so that a gradient across three levels could be observed. This gives 53, 52 and 53 neighbourhoods with median education levels of 32.3%, 48.6% and 68.2%.
 -   income_group: neighbourhoods split at the median household income of \$84,500, used only to test whether the education pattern is better explained by income.
 
 ```{r q3-wrangle}
